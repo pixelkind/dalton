@@ -1,0 +1,32 @@
+{
+  "name": "Dalton",
+  "version": "1.0.0",
+  "description": "A simple ProcessingJS editor for teaching",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/electron/electron-quick-start.git"
+  },
+  "keywords": [
+    "JavaScript",
+    "Khan Academy",
+    "ProcessingJS"
+  ],
+  "author": "Garrit Schaap",
+  "license": "CC0-1.0",
+  "bugs": {
+    "url": "https://github.com/electron/electron-quick-start/issues"
+  },
+  "homepage": "https://github.com/electron/electron-quick-start#readme",
+  "devDependencies": {
+    "electron-packager": "^7.5.1",
+    "electron-prebuilt": "^1.2.0"
+  },
+  "dependencies": {
+    "esprima": "^2.7.2",
+    "underscore": "^1.8.3"
+  }
+}

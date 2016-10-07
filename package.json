@@ -26,6 +26,7 @@
     "electron-prebuilt": "^1.2.0"
   },
   "dependencies": {
+    "electron-settings": "^2.2.1",
     "esprima": "^2.7.2",
     "underscore": "^1.8.3"
   }

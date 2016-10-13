@@ -28,6 +28,7 @@
   "dependencies": {
     "electron-settings": "^2.2.1",
     "esprima": "^2.7.2",
-    "underscore": "^1.8.3"
+    "underscore": "^1.8.3",
+    "electron-canvas-to-buffer": "^2.0.0"
   }
 }

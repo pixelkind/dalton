@@ -56,6 +56,7 @@ function createWindow () {
         label: "File",
         submenu: [
             // New File
+            { label: "New File", accelerator: "CmdOrCtrl+N", click: function() { openNewFile(); } },
             { label: "Open File", accelerator: "CmdOrCtrl+O", click: function() { openFileDialog(); } },
             { type: "separator" },
             { label: "Save", accelerator: "CmdOrCtrl+S", click: function() { saveFile(); } },
@@ -161,7 +162,7 @@ function saveFile() {
       saveFileAs();
       return;
     }
-    writeFile(lastFile);
+    writeFile(lastFile, true);
   })
 };
 
@@ -172,7 +173,7 @@ function saveFileAs() {
       return;
     }
 
-    writeFile(fileName);
+    writeFile(fileName, true);
   });
 };
 
@@ -180,7 +181,7 @@ function saveCanvasAs() {
   mainWindow.webContents.send('saveCanvas');
 }
 
-function writeFile(fileName) {
+function writeFile(fileName, showDialog) {
   mainWindow.webContents.executeJavaScript('window.liveEditor.editor.text();', (data) => {
     fileSystem.writeFile(fileName, data, function(err) {
       if(err) {
@@ -189,7 +190,9 @@ function writeFile(fileName) {
 
       mainWindow.setTitle(fileName);
       settings.set('files', { lastFile: fileName });
-      dialog.showMessageBox({ type: "info", buttons: [], title: "Succes", message: "The file has been succesfully saved" });
+      if (showDialog) {
+        dialog.showMessageBox({ type: "info", buttons: [], title: "Succes", message: "The file has been succesfully saved" });
+      }
     })
   });
 };
@@ -202,6 +205,18 @@ function writeFileData(fileName, data) {
 
     dialog.showMessageBox({ type: "info", buttons: [], title: "Succes", message: "The file has been succesfully saved" });
   })
+};
+
+function openNewFile() {
+  dialog.showSaveDialog(function(fileName) {
+    if (fileName === undefined) {
+      console.log("No Name defined");
+      return;
+    }
+
+    mainWindow.webContents.send('openFile', "");
+    writeFile(fileName, false);
+  });
 };
 
 function openFileDialog() {

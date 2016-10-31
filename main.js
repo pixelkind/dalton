@@ -35,7 +35,7 @@ function createWindow () {
     mainWindow = null
   })
 
-  mainWindow.on('did-finish-loading', function() {
+  mainWindow.webContents.on('did-finish-load', function() {
     openLastFile();
   })
 
@@ -185,6 +185,8 @@ function writeFile(fileName) {
         dialog.showMessageBox({ type: "error", buttons: [], title: "Error", message: "An error occured writing the file: " + err.message });
       }
 
+      mainWindow.setTitle(fileName);
+      settings.set('files', { lastFile: fileName });
       dialog.showMessageBox({ type: "info", buttons: [], title: "Succes", message: "The file has been succesfully saved" });
     })
   });
@@ -219,6 +221,7 @@ function readFile(filepath) {
       return;
     }
 
+    mainWindow.setTitle(filepath);
     mainWindow.webContents.send('openFile', data);
   });
 };

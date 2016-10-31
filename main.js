@@ -73,7 +73,9 @@ function createWindow () {
             { label: "Cut", accelerator: "CmdOrCtrl+X", selector: "cut:" },
             { label: "Copy", accelerator: "CmdOrCtrl+C", selector: "copy:" },
             { label: "Paste", accelerator: "CmdOrCtrl+V", selector: "paste:" },
-            { label: "Select All", accelerator: "CmdOrCtrl+A", selector: "selectAll:" }
+            { label: "Select All", accelerator: "CmdOrCtrl+A", selector: "selectAll:" },
+            { type: "separator" },
+            { label: "Toggle Developer Tools", click: function() { mainWindow.webContents.toggleDevTools(); } }
         ]}, {
           role: 'window',
           submenu: [{

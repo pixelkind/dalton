@@ -10,6 +10,8 @@ const dialog = electron.dialog;
 const fileSystem = require('fs');
 // Settings
 const settings = require('electron-settings');
+// ipcMain
+const {ipcMain} = require('electron');
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -26,15 +28,26 @@ function createWindow () {
   //mainWindow.webContents.openDevTools()
 
   // Emitted when the window is closed.
-  mainWindow.on('closed', function () {
+  mainWindow.on('closed', function() {
     // Dereference the window object, usually you would store windows
     // in an array if your app supports multi windows, this is the time
     // when you should delete the corresponding element.
     mainWindow = null
   })
 
-  mainWindow.on('did-finish-loading', function() {
+  mainWindow.webContents.on('did-finish-load', function() {
     openLastFile();
+  })
+
+  ipcMain.on('saveCanvasData', (event, image) => {
+    dialog.showSaveDialog(function(fileName) {
+      if (fileName === undefined) {
+        console.log("No Name defined");
+        return;
+      }
+
+      writeFileData(fileName, image);
+    });
   })
 
   // https://github.com/electron/electron/blob/master/docs/api/menu.md
@@ -43,10 +56,13 @@ function createWindow () {
         label: "File",
         submenu: [
             // New File
+            { label: "New File", accelerator: "CmdOrCtrl+N", click: function() { openNewFile(); } },
             { label: "Open File", accelerator: "CmdOrCtrl+O", click: function() { openFileDialog(); } },
             { type: "separator" },
             { label: "Save", accelerator: "CmdOrCtrl+S", click: function() { saveFile(); } },
             { label: "Save As...", accelerator: "Shift+CmdOrCtrl+S", click: function() { saveFileAs(); } },
+            { type: "separator" },
+            { label: "Save Canvas As...", click: function() { saveCanvasAs(); } },
             { type: "separator" },
             { label: "Quit", accelerator: "CmdOrCtrl+Q", click: function() { app.quit(); }}
         ]}, {
@@ -58,7 +74,9 @@ function createWindow () {
             { label: "Cut", accelerator: "CmdOrCtrl+X", selector: "cut:" },
             { label: "Copy", accelerator: "CmdOrCtrl+C", selector: "copy:" },
             { label: "Paste", accelerator: "CmdOrCtrl+V", selector: "paste:" },
-            { label: "Select All", accelerator: "CmdOrCtrl+A", selector: "selectAll:" }
+            { label: "Select All", accelerator: "CmdOrCtrl+A", selector: "selectAll:" },
+            { type: "separator" },
+            { label: "Toggle Developer Tools", click: function() { mainWindow.webContents.toggleDevTools(); } }
         ]}, {
           role: 'window',
           submenu: [{
@@ -144,7 +162,7 @@ function saveFile() {
       saveFileAs();
       return;
     }
-    writeFile(lastFile);
+    writeFile(lastFile, true);
   })
 };
 
@@ -155,19 +173,49 @@ function saveFileAs() {
       return;
     }
 
-    writeFile(fileName);
+    writeFile(fileName, true);
   });
 };
 
-function writeFile(fileName) {
+function saveCanvasAs() {
+  mainWindow.webContents.send('saveCanvas');
+}
+
+function writeFile(fileName, showDialog) {
   mainWindow.webContents.executeJavaScript('window.liveEditor.editor.text();', (data) => {
     fileSystem.writeFile(fileName, data, function(err) {
       if(err) {
         dialog.showMessageBox({ type: "error", buttons: [], title: "Error", message: "An error occured writing the file: " + err.message });
       }
 
-      dialog.showMessageBox({ type: "info", buttons: [], title: "Succes", message: "The file has been succesfully saved" });
+      mainWindow.setTitle(fileName);
+      settings.set('files', { lastFile: fileName });
+      if (showDialog) {
+        dialog.showMessageBox({ type: "info", buttons: [], title: "Succes", message: "The file has been succesfully saved" });
+      }
     })
+  });
+};
+
+function writeFileData(fileName, data) {
+  fileSystem.writeFile(fileName, data, function(err) {
+    if(err) {
+      dialog.showMessageBox({ type: "error", buttons: [], title: "Error", message: "An error occured writing the file: " + err.message });
+    }
+
+    dialog.showMessageBox({ type: "info", buttons: [], title: "Succes", message: "The file has been succesfully saved" });
+  })
+};
+
+function openNewFile() {
+  dialog.showSaveDialog(function(fileName) {
+    if (fileName === undefined) {
+      console.log("No Name defined");
+      return;
+    }
+
+    mainWindow.webContents.send('openFile', "");
+    writeFile(fileName, false);
   });
 };
 
@@ -190,6 +238,7 @@ function readFile(filepath) {
       return;
     }
 
+    mainWindow.setTitle(filepath);
     mainWindow.webContents.send('openFile', data);
   });
 };

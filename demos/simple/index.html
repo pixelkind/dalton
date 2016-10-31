@@ -2,7 +2,6 @@
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Live Editor Simple Demo</title>
     <link rel="stylesheet" href="../../build/css/live-editor.core_deps.css"/>
     <link rel="stylesheet" href="../../build/css/live-editor.audio.css"/>
     <link rel="stylesheet" href="../../build/css/live-editor.tooltips.css"/>
@@ -54,7 +53,7 @@
 //        useDebugger = true;
 //    }
 
-    var code = window.localStorage["test-code"] || "rect(10, 10, 100, 100);";
+    var code = window.localStorage["test-code"] || "";
 
     var search = location.search.substring(1);
     var params = {};
@@ -79,8 +78,8 @@
     window.liveEditor = new LiveEditor({
         el: $("#live-editor"),
         code: code,
-        width: 400,
-        height: 500,
+        width: 500,
+        height: 540,
         editorHeight: "100%",
         autoFocus: true,
         workersDir: "../../build/workers/",

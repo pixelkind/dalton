@@ -35,6 +35,8 @@ function createWindow () {
     mainWindow = null
   })
 
+  setLastKnownFilePath();
+
   mainWindow.webContents.on('did-finish-load', function() {
     openLastFile();
   })
@@ -224,7 +226,6 @@ function openFileDialog() {
     if(fileNames === undefined) {
       console.log("No file selected.");
     } else {
-      console.log(fileNames[0]);
       settings.set('files', { lastFile: fileNames[0] });
       readFile(fileNames[0]);
     }
@@ -238,9 +239,21 @@ function readFile(filepath) {
       return;
     }
 
+    let position = filepath.lastIndexOf("/");
+    global.filepath = filepath.substring(0, position+1);
     mainWindow.setTitle(filepath);
     mainWindow.webContents.send('openFile', data);
   });
+};
+
+function setLastKnownFilePath() {
+  settings.get('files.lastFile').then(lastFile => {
+    if (lastFile === undefined) {
+      return;
+    }
+    let position = lastFile.lastIndexOf("/");
+    global.filepath = lastFile.substring(0, position+1);
+  })
 };
 
 function openLastFile() {

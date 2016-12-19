@@ -18,6 +18,8 @@ const {ipcMain} = require('electron');
 let mainWindow
 
 function createWindow () {
+  global.shared = { codeWasChanged: false };
+  global.filepath = "";
   // Create the browser window.
   mainWindow = new BrowserWindow({width: 1024, height: 600})
 
@@ -34,6 +36,15 @@ function createWindow () {
     // when you should delete the corresponding element.
     mainWindow = null
   })
+
+  app.on('before-quit', function(event) {
+    if (global.shared.codeWasChanged) {
+      var buttonIndex = dialog.showMessageBox({ type: "question", message: "Do you really want to quit? You have unsaved changes.", buttons: [ "Ok", "Cancel" ] });
+      if (buttonIndex == 1) {
+        event.preventDefault();
+      }
+    }
+  });
 
   setLastKnownFilePath();
 
@@ -196,6 +207,7 @@ function writeFile(fileName, showDialog) {
 
       mainWindow.setTitle(fileName);
       settings.set('files', { lastFile: fileName });
+      mainWindow.webContents.send('fileSaved', data);
       if (showDialog) {
         dialog.showMessageBox({ type: "info", buttons: [], title: "Succes", message: "The file has been succesfully saved" });
       }

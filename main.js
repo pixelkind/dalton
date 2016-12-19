@@ -169,7 +169,11 @@ function saveFile() {
 };
 
 function saveFileAs() {
-  dialog.showSaveDialog(function(fileName) {
+  dialog.showSaveDialog({ filters: [
+
+     { name: 'JavaScript', extensions: ['js'] }
+
+    ]},function(fileName) {
     if (fileName === undefined) {
       console.log("No Name defined");
       return;

@@ -1,6 +1,6 @@
 {
   "name": "Dalton",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "A simple ProcessingJS editor for educational purposes",
   "main": "main.js",
   "scripts": {
@@ -26,9 +26,10 @@
     "electron-prebuilt": "^1.2.0"
   },
   "dependencies": {
+    "electron-canvas-to-buffer": "^2.0.0",
     "electron-settings": "^2.2.1",
     "esprima": "^2.7.2",
-    "underscore": "^1.8.3",
-    "electron-canvas-to-buffer": "^2.0.0"
+    "path": "^0.12.7",
+    "underscore": "^1.8.3"
   }
 }

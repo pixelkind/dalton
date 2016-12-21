@@ -255,8 +255,8 @@ function readFile(filepath) {
       return;
     }
 
-    var safeFilepath = filepath.replace('/\\/g', '/');
-    let position = safeFilepath.lastIndexOf("\\");
+    var safeFilepath = filepath.replace(/\\/g, '/');
+    let position = safeFilepath.lastIndexOf("/");
     global.filepath = safeFilepath.substring(0, position+1);
     mainWindow.setTitle(filepath);
     mainWindow.webContents.send('openFile', data);

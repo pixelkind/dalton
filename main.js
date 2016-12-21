@@ -255,8 +255,9 @@ function readFile(filepath) {
       return;
     }
 
-    let position = filepath.lastIndexOf("/");
-    global.filepath = filepath.substring(0, position+1);
+    var safeFilepath = filepath.replace('/\\/g', '/');
+    let position = safeFilepath.lastIndexOf("\\");
+    global.filepath = safeFilepath.substring(0, position+1);
     mainWindow.setTitle(filepath);
     mainWindow.webContents.send('openFile', data);
   });

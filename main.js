@@ -12,6 +12,8 @@ const fileSystem = require('fs');
 const settings = require('electron-settings');
 // ipcMain
 const {ipcMain} = require('electron');
+// path separator
+const path = require('path');
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -255,7 +257,7 @@ function readFile(filepath) {
       return;
     }
 
-    let position = filepath.lastIndexOf("/");
+    let position = filepath.lastIndexOf(path.sep);
     global.filepath = filepath.substring(0, position+1);
     mainWindow.setTitle(filepath);
     mainWindow.webContents.send('openFile', data);
@@ -267,7 +269,7 @@ function setLastKnownFilePath() {
     if (lastFile === undefined) {
       return;
     }
-    let position = lastFile.lastIndexOf("/");
+    let position = lastFile.lastIndexOf(path.sep);
     global.filepath = lastFile.substring(0, position+1);
   })
 };

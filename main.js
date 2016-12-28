@@ -65,6 +65,8 @@ function createWindow () {
     });
   })
 
+
+
   // https://github.com/electron/electron/blob/master/docs/api/menu.md
   // Create the Application's main menu
     const template = [{
@@ -85,6 +87,7 @@ function createWindow () {
         submenu: [
             { label: "Undo", accelerator: "CmdOrCtrl+Z", selector: "undo:" },
             { label: "Redo", accelerator: "Shift+CmdOrCtrl+Z", selector: "redo:" },
+            { label: "Restart", accelerator: "CmdOrCtrl+R", click: function(){ refresh(); } },
             { type: "separator" },
             { label: "Cut", accelerator: "CmdOrCtrl+X", selector: "cut:" },
             { label: "Copy", accelerator: "CmdOrCtrl+C", selector: "copy:" },
@@ -168,6 +171,10 @@ if (process.platform === 'darwin') {
   }
 
   Menu.setApplicationMenu(Menu.buildFromTemplate(template));
+}
+
+function refresh(){
+	mainWindow.webContents.send('refresh');
 }
 
 function saveFile() {

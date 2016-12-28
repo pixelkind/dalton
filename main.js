@@ -12,12 +12,16 @@ const fileSystem = require('fs');
 const settings = require('electron-settings');
 // ipcMain
 const {ipcMain} = require('electron');
+// path separator
+const path = require('path');
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow
 
 function createWindow () {
+  global.shared = { codeWasChanged: false };
+  global.filepath = "";
   // Create the browser window.
   mainWindow = new BrowserWindow({width: 1024, height: 600})
 
@@ -34,6 +38,17 @@ function createWindow () {
     // when you should delete the corresponding element.
     mainWindow = null
   })
+
+  app.on('before-quit', function(event) {
+    if (global.shared.codeWasChanged) {
+      var buttonIndex = dialog.showMessageBox({ type: "question", message: "Do you really want to quit? You have unsaved changes.", buttons: [ "Ok", "Cancel" ] });
+      if (buttonIndex == 1) {
+        event.preventDefault();
+      }
+    }
+  });
+
+  setLastKnownFilePath();
 
   mainWindow.webContents.on('did-finish-load', function() {
     openLastFile();
@@ -167,7 +182,11 @@ function saveFile() {
 };
 
 function saveFileAs() {
-  dialog.showSaveDialog(function(fileName) {
+  dialog.showSaveDialog({ filters: [
+
+     { name: 'JavaScript', extensions: ['js'] }
+
+    ]},function(fileName) {
     if (fileName === undefined) {
       console.log("No Name defined");
       return;
@@ -190,6 +209,7 @@ function writeFile(fileName, showDialog) {
 
       mainWindow.setTitle(fileName);
       settings.set('files', { lastFile: fileName });
+      mainWindow.webContents.send('fileSaved', data);
       if (showDialog) {
         dialog.showMessageBox({ type: "info", buttons: [], title: "Succes", message: "The file has been succesfully saved" });
       }
@@ -224,7 +244,6 @@ function openFileDialog() {
     if(fileNames === undefined) {
       console.log("No file selected.");
     } else {
-      console.log(fileNames[0]);
       settings.set('files', { lastFile: fileNames[0] });
       readFile(fileNames[0]);
     }
@@ -238,9 +257,21 @@ function readFile(filepath) {
       return;
     }
 
+    let position = filepath.lastIndexOf(path.sep);
+    global.filepath = filepath.substring(0, position+1);
     mainWindow.setTitle(filepath);
     mainWindow.webContents.send('openFile', data);
   });
+};
+
+function setLastKnownFilePath() {
+  settings.get('files.lastFile').then(lastFile => {
+    if (lastFile === undefined) {
+      return;
+    }
+    let position = lastFile.lastIndexOf(path.sep);
+    global.filepath = lastFile.substring(0, position+1);
+  })
 };
 
 function openLastFile() {

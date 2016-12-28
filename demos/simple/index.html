@@ -41,8 +41,16 @@
 
     <script>
     const ipcRenderer = require('electron').ipcRenderer;
+    const remote = require('electron').remote;
+
     ipcRenderer.on('openFile', (event, data) => {
+      window.liveEditor.imagesDir = remote.getGlobal("filepath");
       window.liveEditor.editor.text(data);
+      remote.getGlobal("shared").codeWasChanged = false;
+    })
+
+    ipcRenderer.on('fileSaved', (event) => {
+      remote.getGlobal("shared").codeWasChanged = false;
     })
 
     var outputUrl = "output.html";
@@ -91,7 +99,9 @@
         useDebugger: useDebugger,
         newErrorExperience: true,
     });
+    window.liveEditor.imagesDir = remote.getGlobal("filepath");
     liveEditor.editor.on("change", function() {
+        remote.getGlobal("shared").codeWasChanged = true;
         window.localStorage["test-code"] = liveEditor.editor.text();
     });
     ScratchpadAutosuggest.init(liveEditor.editor.editor);

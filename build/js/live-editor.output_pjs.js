@@ -158,6 +158,7 @@ var PJSCodeInjector = (function () {
         key: "addMethods",
         value: function addMethods(additionalMethods) {
             var _this = this;
+            var _loadImage = this.processing.loadImage;
 
             if (this.sandboxed) {
                 this.processing.Object = window.Object;
@@ -176,7 +177,7 @@ var PJSCodeInjector = (function () {
                 },
 
                 loadImage: function loadImage(file) {
-                    throw { message: "Use getImage instead of loadImage." };
+                    return _loadImage(_this.resourceCache.output.imagesDir + file);
                 },
 
                 requestImage: function requestImage(file) {

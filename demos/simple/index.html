@@ -49,6 +49,10 @@
       remote.getGlobal("shared").codeWasChanged = false;
     })
 
+    ipcRenderer.on('refresh', (event) => {
+        window.liveEditor.restartCode();
+    })
+
     ipcRenderer.on('fileSaved', (event) => {
       remote.getGlobal("shared").codeWasChanged = false;
     })

@@ -423,7 +423,7 @@
     z-index: 880;
 }
 
-button#restart-code {
+button {
     transition: box-shadow 200ms ease-in-out;
     box-shadow: 0 0 0px green;
     color: white;
@@ -441,7 +441,7 @@ button#restart-code {
     border-radius: 2px;
 }
 
-button#restart-code:hover{
+button:hover{
 /* button bg: */
 background: #33A197;
 

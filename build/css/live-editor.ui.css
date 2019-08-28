@@ -423,9 +423,28 @@
     z-index: 880;
 }
 
-button {
+button#restart-code {
     transition: box-shadow 200ms ease-in-out;
     box-shadow: 0 0 0px green;
+    color: white;
+    border: none;
+    border-radius: 2px;
+    box-shadow: 
+    font-size: 12px;
+    font-weight: 500;
+    height: 30;
+    width: 60;
+
+        /* button bg: */
+    background: #009688;
+    /*box-shadow: 0 0 2px 0 rgba(0,0,0,0.12), 0 2px 2px 0 rgba(0,0,0,0.24);*/
+    border-radius: 2px;
+}
+
+button#restart-code:hover{
+/* button bg: */
+background: #33A197;
+
 }
 
 button.hilite {

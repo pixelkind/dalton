@@ -39,7 +39,7 @@ function createWindow () {
     mainWindow = null
   })
 
-  app.on('before-quit', function(event) {
+  mainWindow.on('close', function(event) {
     if (global.shared.codeWasChanged) {
       var buttonIndex = dialog.showMessageBox({ type: "question", message: "Do you really want to quit? You have unsaved changes.", buttons: [ "Ok", "Cancel" ] });
       if (buttonIndex == 1) {
